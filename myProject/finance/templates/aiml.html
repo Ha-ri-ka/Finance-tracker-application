@@ -9,17 +9,40 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin: 5px;
     }
     label,.btn{
         font-size: 20px;
+    }
+    .formcontainer{
+        align-items: center;
+        justify-content: center;
     }
     .bottom{
         display: flex;
         flex-direction: row;
         align-items: center;
+        justify-content: center;
+        flex:1;
+    }
+    .bottom > div:first-child {
+        flex: 0 0 30%;
+    }
+    .bottom > div:last-child {
+        flex: 0 0 70%;
+    }
+    .bottomleft{
+        text-align: center;
+        font-size: 25px;
+    }
+    p{
+        margin: 0px;
+        font-weight: 600;
     }
 </style>
 <body>
+    <header><h2>Analyze spending trend in a selected period.</h2></header>
+    <div class="formcontainer">
     <form method="POST" action="{% url 'ai_view' %}" class="container mt-4" >
         {% csrf_token %}
         <div class="form-row">
@@ -36,18 +59,36 @@
                 <button type="submit" class="btn btn-primary btn-block" style="width: 150px;">Get Insights</button>
             </div>
         </div>
-    </form>   
+    </form>
+    </div>
+    {% if startdate and enddate%}
     <div><h3>Statistics from {{startdate}} to {{enddate}}</h3></div>
     <div class="bottom">
         <div class="bottomleft">
-                {% for stat, data in stats.items %}
+            {% for stat, data in stats.items %}
             <div>
-                {{stat}}
-                {% for val in data %}
-                {{val}}
-                {% endfor %}
+                <p>
+                    {% if stat == 'max' %}
+                        Maximum spending:
+                    {% endif %}
+                    {% if stat == 'min' %}
+                        Minimum spending:
+                    {% endif %}
+                    {% if stat == 'avg' %}
+                        Average spending:
+                    {% endif %}
+                    {% if stat == 'median' %}
+                        Median spending:
+                    {% endif %}
+                </p>
+                {% if data.0%}
+                &#x20B9;{{data.1}} on {{data.0}}
+                {%else%}
+                &#x20B9;{{data.1}}
+                {%endif%}
             </div>
-                {% endfor %}
+        {% endfor %}
+        
         </div>
         <div class="col-md-8  d-flex min-vh-100 justify-content-center align-items-center">
             <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="2000">
@@ -72,9 +113,8 @@
                 </a>
             </div>
         </div>
-
     </div> 
-
+    {%endif%}
     <!-- Include jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Include Bootstrap JavaScript -->

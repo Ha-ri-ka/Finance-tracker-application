@@ -92,6 +92,49 @@ def csvView(request):
 from django.utils.dateparse import parse_date
 from datetime import datetime, timedelta
 import statistics
+
+def utility(user):
+    current_month = date.today().month
+    current_year = date.today().year
+    num_days = calendar.monthrange(current_year, current_month)[1]
+    x = list(range(1, num_days + 1))
+    # user = request.user
+    expenses = Expense.objects.filter(user=user, date__month=current_month, date__year=current_year)
+    amount_spent_per_day = {day: 0 for day in x}
+    #bar plot
+    for expense in expenses:
+        amount_spent_per_day[expense.date.day] += expense.amount
+    y = [amount_spent_per_day[day] for day in x]
+    plt.figure(figsize=(8, 6))
+    bar_width = 0.4
+    bars = plt.bar(x, y, width=bar_width)
+    plt.xlabel('Days')
+    plt.ylabel('Amount Spent')
+    plt.title(f'Amount spent each day in {calendar.month_name[current_month]},{current_year}')
+    plt.xticks(x, rotation=90)
+    for bar, amount in zip(bars, y):
+        plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 5, str(int(amount)), ha='center')
+    buffer1 = BytesIO()
+    plt.savefig(buffer1, format='png')
+    buffer1.seek(0)
+    bar_plot_image = base64.b64encode(buffer1.getvalue()).decode('utf-8')
+    buffer1.close()
+    #pie chart
+    categories = expenses.values_list('category', flat=True).distinct()
+    total_spent_per_category = {category: 0 for category in categories}
+    for expense in expenses:
+        total_spent_per_category[expense.category] += expense.amount
+    plt.figure(figsize=(8, 6))
+    plt.pie(total_spent_per_category.values(), labels=total_spent_per_category.keys(), autopct='%1.1f%%')
+    plt.title(f'Percentage of Expenses by Category in {calendar.month_name[current_month]},{current_year}')
+    buffer2 = BytesIO()
+    plt.savefig(buffer2, format='png')
+    buffer2.seek(0)
+    pie_chart_image = base64.b64encode(buffer2.getvalue()).decode('utf-8')
+    buffer2.close()
+    return {'bar_plot_image': bar_plot_image,'pie_chart_image': pie_chart_image}
+    
+
 @login_required
 def ai_view(request): 
     if request.method=='POST':
@@ -100,51 +143,15 @@ def ai_view(request):
     
     #DEFAULT PAGE VIEW COMPONENTS SHOWING CURRENT MONTH'S EXPENSES
     else:
-        current_month = date.today().month
-        current_year = date.today().year
-        num_days = calendar.monthrange(current_year, current_month)[1]
-        x = list(range(1, num_days + 1))
-        user = request.user
-        expenses = Expense.objects.filter(user=user, date__month=current_month, date__year=current_year)
-        amount_spent_per_day = {day: 0 for day in x}
-        #bar plot
-        for expense in expenses:
-            amount_spent_per_day[expense.date.day] += expense.amount
-        y = [amount_spent_per_day[day] for day in x]
-        plt.figure(figsize=(8, 6))
-        bar_width = 0.4
-        bars = plt.bar(x, y, width=bar_width)
-        plt.xlabel('Days')
-        plt.ylabel('Amount Spent')
-        plt.title(f'Amount spent each day in {calendar.month_name[current_month]},{current_year}')
-        plt.xticks(x, rotation=90)
-        for bar, amount in zip(bars, y):
-            plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 5, str(int(amount)), ha='center')
-        buffer1 = BytesIO()
-        plt.savefig(buffer1, format='png')
-        buffer1.seek(0)
-        bar_plot_image = base64.b64encode(buffer1.getvalue()).decode('utf-8')
-        buffer1.close()
-        #pie chart
-        categories = expenses.values_list('category', flat=True).distinct()
-        total_spent_per_category = {category: 0 for category in categories}
-        for expense in expenses:
-            total_spent_per_category[expense.category] += expense.amount
-        plt.figure(figsize=(8, 6))
-        plt.pie(total_spent_per_category.values(), labels=total_spent_per_category.keys(), autopct='%1.1f%%')
-        plt.title(f'Percentage of Expenses by Category in {calendar.month_name[current_month]},{current_year}')
-        buffer2 = BytesIO()
-        plt.savefig(buffer2, format='png')
-        buffer2.seek(0)
-        pie_chart_image = base64.b64encode(buffer2.getvalue()).decode('utf-8')
-        buffer2.close()
-        #highest lowest and average
-
-        return render(request, 'aiml.html', {'bar_plot_image': bar_plot_image,'pie_chart_image': pie_chart_image})
+        user=request.user 
+        dict=utility(user) 
+        return render(request, 'aiml.html', dict)      
     
     #FORM SUBMITTED WITHOUT INPUT VALUES
     if not startdate or not enddate:
-        return render(request,'aiml.html')
+        user=request.user 
+        dict=utility(user) 
+        return render(request, 'aiml.html', dict)
     
     startdate=parse_date(startdate)
     enddate=parse_date(enddate)
@@ -193,7 +200,7 @@ def ai_view(request):
     # Calculate the average
     average_value = round(sum(amount_spent_per_day.values()) / len(amount_spent_per_day),2)
     # Calculate the median
-    median_value = round(statistics.median(amount_spent_per_day.values()),2)
+    median_value = round(statistics.median(value for value in amount_spent_per_day.values() if value != 0), 2)
     stats={
         'max':[largest_key,largest_value],
         'min':[smallest_key,smallest_value],
