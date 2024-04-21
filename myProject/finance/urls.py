@@ -8,7 +8,7 @@ urlpatterns = [
     path('add-expense/', views.add_expense, name='add_expense'),
     path('home/', views.home_view, name='home'),
     path('profile/', views.profile_view, name='profile'),
-    path('history/', views.history_view, name='history'),
+    path('history/', views.history_view, name='history_view'),
     path('ai/', views.ai_view, name='ai_view'),
     path('csv/', views.csvView, name='csvView')
 ]

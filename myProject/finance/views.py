@@ -140,18 +140,17 @@ def ai_view(request):
     if request.method=='POST':
         startdate = request.POST.get('startdate')
         enddate = request.POST.get('enddate')
+        #FORM SUBMITTED WITHOUT INPUT VALUES
+        if not startdate or not enddate:
+            user=request.user 
+            dict=utility(user) 
+            return render(request, 'aiml.html', dict)
     
     #DEFAULT PAGE VIEW COMPONENTS SHOWING CURRENT MONTH'S EXPENSES
     else:
         user=request.user 
         dict=utility(user) 
         return render(request, 'aiml.html', dict)      
-    
-    #FORM SUBMITTED WITHOUT INPUT VALUES
-    if not startdate or not enddate:
-        user=request.user 
-        dict=utility(user) 
-        return render(request, 'aiml.html', dict)
     
     startdate=parse_date(startdate)
     enddate=parse_date(enddate)
@@ -213,8 +212,15 @@ def ai_view(request):
 @login_required
 def history_view(request):
     # Retrieve all expenses for the current user
-    user_expenses = Expense.objects.filter(user=request.user)
-    
+    if request.method=='POST':
+        startdate = parse_date(request.POST.get('startdate'))
+        enddate = parse_date(request.POST.get('enddate'))
+        if not startdate or not enddate:
+            user_expenses = Expense.objects.filter(user=request.user)
+        else:
+            user_expenses = Expense.objects.filter(user=request.user, date__range=[startdate, enddate])
+    else:
+        user_expenses = Expense.objects.filter(user=request.user)
     # Pass expenses to the template
     return render(request, 'history.html', {'expenses': user_expenses})
 
