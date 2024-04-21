@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    {% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.7/lottie.min.js"></script>
+  </head>
+  <body>
+    <div class="d-flex min-vh-100">
+      <div class="bg-primary d-flex flex-column align-items-center justify-content-center" style="flex-basis: 60%">
+        <h2 class="text-white display-2" style="font-family: 'YourFont', sans-serif;">SmartSpend</h2>
+        <!-- 3/5 = 60% -->
+        <div style="height: 500px;" id="lottie-animation"></div>
+
+        <p class="text-white" style="font-size: 1.5rem;">A simple and smart way to manage your expenses.</p>
+
+        <script>
+          // Initialize Lottie
+          const animationContainer =
+            document.getElementById("lottie-animation");
+          const animData = {
+            container: animationContainer,
+            renderer: "svg",
+            loop: true,
+            autoplay: true,
+            path: "{% static 'landing.json' %}", // Path to your Lottie JSON file
+          };
+          const anim = lottie.loadAnimation(animData);
+        </script>
+      </div>
+      <div class="d-flex align-items-center justify-content-center" style="flex-basis: 40%">
+        <div class="container px-5 d-flex flex-column align-items-center justify-content-center">
+
+
+          <img src="{% static 'S.jpg' %}" alt="S logo">
+          <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                name="username"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+              />
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+            
+            Don't have an account ?
+            <a href="{% url 'register' %}" class="btn btn-link" style="color: red;">Register</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

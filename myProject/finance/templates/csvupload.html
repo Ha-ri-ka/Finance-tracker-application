@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload CSV File</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-5">Upload CSV File</h2>
+        <form method="post" enctype="multipart/form-data" action="{% url 'csvView' %}" class="mt-4">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="csv_file">Choose CSV File:</label>
+                <input type="file" class="form-control-file" id="csv_file" name="csv_file" accept=".csv">
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+    </div>
+    <!-- Bootstrap JS (optional, for some features) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

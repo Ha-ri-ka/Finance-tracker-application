@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Insights</title>
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css'>
+</head>
+<style>
+    body{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    label,.btn{
+        font-size: 20px;
+    }
+    .bottom{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+</style>
+<body>
+    <form method="POST" action="{% url 'ai_view' %}" class="container mt-4">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="sdate">Start Date</label>
+                <input type="date" class="form-control" id="sdate" name="startdate">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="edate">End Date</label>
+                <input type="date" class="form-control" id="edate" name="enddate">
+            </div>
+            <div class="form-group col-md-4">
+                <label>&nbsp;</label> <!-- Empty label for spacing -->
+                <button type="submit" class="btn btn-primary btn-block" style="width: 150px;">Get Insights</button>
+            </div>
+        </div>
+    </form>   
+    <div>Statistics from {{startdate}} to {{enddate}}</div>
+    <div class="bottom">
+        <div class="bottomleft">
+                {% for stat, data in stats.items %}
+            <div>
+                {{stat}}
+                {% for val in data %}
+                {{val}}
+                {% endfor %}
+            </div>
+                {% endfor %}
+        </div>
+        <div class="col-md-8  d-flex min-vh-100 justify-content-center align-items-center">
+            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="2000">
+                <div class="carousel-inner">
+                    <!-- First slide with image -->
+                    <div class="carousel-item active">
+                        <img src="data:image/png;base64,{{ bar_plot_image }}" class="d-block w-100" alt="Spending Pattern">
+                    </div>
+                    <!-- Second slide with heading -->
+                    <div class="carousel-item">
+                        <img src="data:image/png;base64,{{ pie_chart_image }}" class="d-block w-100" alt="Percentage of Expenses by Category">
+                    </div>
+                </div>
+                <!-- Previous and next buttons -->
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </a>
+            </div>
+        </div>
+
+    </div> 
+
+    <!-- Include jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>

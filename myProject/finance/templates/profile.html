@@ -1,0 +1,42 @@
+<!-- profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    {% load static %}
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+    <div class="container">
+        <h1>User Profile</h1>
+        <h3>Name: {{ profile.name }}</h3>
+        <p>Username: {{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Monthly Budget: {{ profile.monthly_budget }}</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <label for="monthly_budget">Monthly Budget:</label>
+            <input type="range" id="monthly_budget" name="monthly_budget" min="5000" max="50000" step="500" value="{{ profile.monthly_budget }}" required>
+            <output id="budget_value" for="monthly_budget">{{ profile.monthly_budget }}</output>
+            <button type="submit" class="btn btn-primary">Update Monthly Budget</button>
+        </form>
+        
+        <script>
+            const slider = document.getElementById('monthly_budget');
+            const output = document.getElementById('budget_value');
+            output.textContent = slider.value;
+        
+            slider.addEventListener('input', function() {
+                output.textContent = this.value;
+            });
+        </script>
+        
+        
+    </div>
+</body>
+</html>

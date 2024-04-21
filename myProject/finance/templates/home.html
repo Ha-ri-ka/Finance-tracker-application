@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    {% load bootstrap5 %} 
+    {% bootstrap_css %} 
+    {% bootstrap_javascript %}
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-lightblue" style="background-color: #7bc1f3;">
+        <div class="container">
+            <a class="navbar-brand" href="#"><img src="{% static 'S.jpg' %}" alt="S logo" style="height: 50px;"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <h4 class="text-white">{{username}}</h4>
+                    </li>
+                </ul>
+    
+                <ul class="navbar-nav text-center  ms-auto">
+                    <li class="nav-item text-white">
+                        <img src="{% static 'rupee.png' %}" alt="rupee" style="height: 30px;">
+                         {{ total_spent }} / {{ monthly_budget }}
+                    </li>
+                </ul>
+    
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="btn btn-light me-2" href="{% url 'ai_view' %}">AI/ML</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#infoModal">My Info</button>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary me-2" href="{% url 'profile' %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-success me-2" href="{% url 'history' %}">History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-dark me-2" href="{% url 'csvView' %}">Upload csv</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-danger" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoModalLabel">Monthly Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Total Spent: Rs.{{ total_spent }}</p>
+                <p>Remaining Budget: Rs.{{ remaining_budget }}</p>
+                <p>Monthly Budget: Rs.{{ monthly_budget }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8  d-flex min-vh-100 justify-content-center align-items-center">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+                    <div class="carousel-inner">
+                        <!-- First slide with image -->
+                        <div class="carousel-item active">
+                            <img src="data:image/png;base64,{{ bar_plot_image }}" class="d-block w-100" alt="Spending Pattern">
+                        </div>
+                        <!-- Second slide with heading -->
+                        <div class="carousel-item">
+                            <img src="data:image/png;base64,{{ pie_chart_image }}" class="d-block w-100" alt="Percentage of Expenses by Category">
+                        </div>
+                    </div>
+                    <!-- Previous and next buttons -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex min-vh-100 justify-content-center align-items-center" style=" background-color: #d1eefb;">
+                <div class="container px-5">
+                    <div style="padding: 0px 20px; ">
+                        <h3>Add your expense here!</h3>
+                    </div>
+                    <form class="" style="padding: 40px 20px; " action="{% url 'add_expense' %}" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter amount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="category" name="category" placeholder="Enter category" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="date" name="date">
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
