@@ -209,6 +209,7 @@ def ai_view(request):
     return render(request, 'aiml.html', {'bar_plot_image': bar_plot_image,'pie_chart_image': pie_chart_image,'startdate':startdate,'enddate':enddate,'stats':stats})
 
 #FUNCTION FOR HISTORY-----------------------------------------------------
+from collections import defaultdict
 @login_required
 def history_view(request):
     # Retrieve all expenses for the current user
@@ -221,8 +222,15 @@ def history_view(request):
             user_expenses = Expense.objects.filter(user=request.user, date__range=[startdate, enddate])
     else:
         user_expenses = Expense.objects.filter(user=request.user)
-    # Pass expenses to the template
-    return render(request, 'history.html', {'expenses': user_expenses})
+    expenses_by_month = defaultdict(list)
+    for expense in user_expenses:
+        month_year = expense.date.strftime('%B %Y')
+        expenses_by_month[month_year].append(expense)
+
+    # Sort expenses by month
+    sorted_expenses_by_month = dict(sorted(expenses_by_month.items(), key=lambda x: datetime.strptime(x[0], '%B %Y'), reverse=True))
+
+    return render(request, 'history.html', {'expenses_by_month': sorted_expenses_by_month,'startdate':startdate,'enddate':enddate})
 
 #FUNCTION FOR ADD EXPENSE-----------------------------------------------------
 @login_required

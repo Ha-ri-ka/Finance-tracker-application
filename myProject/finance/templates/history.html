@@ -1,7 +1,6 @@
-<!-- history.html -->
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,28 +8,39 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
+
 <body>
     <div class="container">
-    <h1 class="mt-4">Expense History</h1>
-    <div class="formcontainer">
-        <form method="POST" action="{% url 'history_view' %}" class="container mt-4" >
-            {% csrf_token %}
-            <div class="form-row">
-                <div class="form-group col-md-4">
-                    <label for="sdate">Start Date</label>
-                    <input type="date" class="form-control" id="sdate" name="startdate">
+        <h1 class="mt-4">Expense History</h1>
+        <div class="formcontainer">
+            <form method="POST" action="{% url 'history_view' %}" class="container mt-4">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="sdate">Start Date</label>
+                        <input type="date" class="form-control" id="sdate" name="startdate">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="edate">End Date</label>
+                        <input type="date" class="form-control" id="edate" name="enddate">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>&nbsp;</label> <!-- Empty label for spacing -->
+                        <button type="submit" class="btn btn-primary btn-block" style="width: 150px;">Get
+                            History</button>
+                    </div>
                 </div>
-                <div class="form-group col-md-4">
-                    <label for="edate">End Date</label>
-                    <input type="date" class="form-control" id="edate" name="enddate">
-                </div>
-                <div class="form-group col-md-4">
-                    <label>&nbsp;</label> <!-- Empty label for spacing -->
-                    <button type="submit" class="btn btn-primary btn-block" style="width: 150px;">Get History</button>
-                </div>
-            </div>
-        </form>
+            </form>
         </div>
+        {% if startdate and enddate %}
+        <div>
+            <h4>History from {{startdate}} to {{enddate}}</h4>
+        </div>
+        {%endif%}
+        <!-- Loop through expenses grouped by month -->
+        {% if expenses_by_month %}
+        {% for month, expenses in expenses_by_month.items %}
+        <h5 class="mt-4">{{ month }}</h5>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -42,14 +52,17 @@
             <tbody>
                 {% for expense in expenses %}
                 <tr>
-                    <td>{{ expense.date }}</td>
+                    <td>{{ expense.date.day }}</td>
                     <td>&#x20B9;{{ expense.amount }}</td>
                     <td>{{ expense.category }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        {% endfor %}
+        {% else %}
+        <h3>No records found</h3>
+        {% endif %}
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
