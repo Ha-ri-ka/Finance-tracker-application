@@ -222,15 +222,16 @@ def history_view(request):
             user_expenses = Expense.objects.filter(user=request.user, date__range=[startdate, enddate])
     else:
         user_expenses = Expense.objects.filter(user=request.user)
+        startdate,enddate=None,None
     expenses_by_month = defaultdict(list)
     for expense in user_expenses:
         month_year = expense.date.strftime('%B %Y')
         expenses_by_month[month_year].append(expense)
-
-    # Sort expenses by month
     sorted_expenses_by_month = dict(sorted(expenses_by_month.items(), key=lambda x: datetime.strptime(x[0], '%B %Y'), reverse=True))
-
+    if not startdate and not enddate:
+        return render(request, 'history.html', {'expenses_by_month': sorted_expenses_by_month})
     return render(request, 'history.html', {'expenses_by_month': sorted_expenses_by_month,'startdate':startdate,'enddate':enddate})
+    
 
 #FUNCTION FOR ADD EXPENSE-----------------------------------------------------
 @login_required
