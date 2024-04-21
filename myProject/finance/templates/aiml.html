@@ -20,7 +20,7 @@
     }
 </style>
 <body>
-    <form method="POST" action="{% url 'ai_view' %}" class="container mt-4">
+    <form method="POST" action="{% url 'ai_view' %}" class="container mt-4" >
         {% csrf_token %}
         <div class="form-row">
             <div class="form-group col-md-4">
@@ -37,7 +37,7 @@
             </div>
         </div>
     </form>   
-    <div>Statistics from {{startdate}} to {{enddate}}</div>
+    <div><h3>Statistics from {{startdate}} to {{enddate}}</h3></div>
     <div class="bottom">
         <div class="bottomleft">
                 {% for stat, data in stats.items %}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Insights</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .form-container {
+      margin-top: 4rem;
+    }
+
+    label,
+    .btn {
+      font-size: 20px;
+    }
+
+    .stats {
+      padding: 2rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-top: 2rem;
+    }
+
+    .carousel {
+      height: 100%;
+    }
+
+    .carousel-item img {
+      object-fit: cover;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+    <div class="form-container row">
+      <form method="POST" action="{% url 'ai_view' %}" class="col-md-12">
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="sdate">Start Date</label>
+            <input type="date" class="form-control" id="sdate" name="startdate">
+          </div>
+          <div class="form-group col-md-4">
+            <label for="edate">End Date</label>
+            <input type="date" class="form-control" id="edate" name="enddate">
+          </div>
+          <div class="form-group col-md-4">
+            <label>&nbsp;</label>
+            <button type="submit" class="btn btn-primary btn-block" style="width: 150px;">Get Insights</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <h2>Statistics from {{ startdate }} to {{ enddate }}</h2>
+    <div class="row">
+      <div class="stats col-md-6">
+        <div>
+          {% for stat, data in stats.items %}
+          <div>
+            <h4>{{ stat }}</h4>
+            <ul>
+              {% for val in data %}
+              <li>{{ val }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div id="carouselExampleControls" class="carousel slide carousel-fade" data-ride="carousel" data-interval="2000">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img src="data:image/png;base64,{{ bar_plot_image }}" class="d-block w-100" alt="Spending Pattern">
+            </div>
+            <div class="carousel-item">
+              <img src="data:image/png;base64,{{ pie_chart_image }}" class="d-block w-100" alt="Percentage of Expenses by Category">
+            </div>
+          </div>
+          <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  <!-- Include jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- Include Bootstrap JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>
